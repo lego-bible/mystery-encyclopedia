@@ -10,17 +10,17 @@ import {
 const AUTHOR_LIST = [
     "에드거 앨런 포", "아서 코난 도일", "아가사 크리스티", "모리스 르블랑", "엘러리 퀸",
     "레이먼드 챈들러", "대실 해밋", "에도가와 란포", "히가시노 게이고", "미야베 미유키"
-    // ... 작가 리스트는 필요에 따라 추가하세요
+    // 필요시 작가 리스트 추가
 ];
 
 const THEME_LIST = [
     "본격 추리 (Honkaku)", "신본격 추리 (Shin-honkaku)", "하드보일드 (Hardboiled)",
     "밀실 살인 (Locked-room Mystery)", "서술 트릭 (Unreliable Narrator)"
-    // ... 테마 리스트는 필요에 따라 추가하세요
+    // 필요시 테마 리스트 추가
 ];
 
 export default function Home() {
-    const [view, setView] = useState('login'); // 초기 화면을 login으로 설정
+    const [view, setView] = useState('login');
     const [userApiKey, setUserApiKey] = useState('');
     const [selectedAuthor, setSelectedAuthor] = useState('');
     const [customAuthor, setCustomAuthor] = useState('');
@@ -31,7 +31,6 @@ export default function Home() {
     const [errorMessage, setErrorMessage] = useState('');
     const [copySuccess, setCopySuccess] = useState(false);
 
-    // 페이지 로드 시 저장된 API 키가 있는지 확인
     useEffect(() => {
         const savedKey = localStorage.getItem('mystery_app_key');
         if (savedKey) {
@@ -40,7 +39,8 @@ export default function Home() {
         }
     }, []);
 
-    const handleLogin = (e) => {
+    // TypeScript 에러 해결: e 변수에 FormEvent 타입 명시
+    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (userApiKey.trim().length < 20) {
             alert('올바른 API 키 형식이 아닙니다.');
@@ -56,7 +56,8 @@ export default function Home() {
         setView('login');
     };
 
-    const handleSearch = async (query, isAuthor) => {
+    // TypeScript 에러 해결: query와 isAuthor에 타입 명시
+    const handleSearch = async (query: string, isAuthor: boolean) => {
         if (!query) return;
         
         setErrorMessage('');
@@ -74,7 +75,7 @@ export default function Home() {
                 body: JSON.stringify({ 
                     query, 
                     instruction, 
-                    userApiKey // 사용자가 입력한 키를 함께 전송
+                    userApiKey
                 })
             });
 
@@ -87,7 +88,7 @@ export default function Home() {
             setResultContent(data.text);
             setView('result');
 
-        } catch (err) {
+        } catch (err: any) { // err에 any 타입 추가
             setErrorMessage(err.message);
             setView('error');
         }
@@ -256,7 +257,7 @@ export default function Home() {
                             
                             <div 
                                 className="prose max-w-none text-sm md:text-lg leading-relaxed font-serif"
-                                dangerouslySetInnerHTML={{ __html: marked.parse(resultContent) }} 
+                                dangerouslySetInnerHTML={{ __html: marked.parse(resultContent) as string }} 
                             />
                         </div>
                     </div>
